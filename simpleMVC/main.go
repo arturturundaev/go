@@ -7,6 +7,10 @@ import (
 	"html/template"
 )
 
+/**
+@todo future определить какой тип запроса - 
+если json, то и возращать json
+*/
 func parseUrl(responseWriter http.ResponseWriter, request *http.Request) {
 	fmt.Println(request.Method)
 	switch request.Method {
@@ -18,7 +22,13 @@ func parseUrl(responseWriter http.ResponseWriter, request *http.Request) {
 			fmt.Fprintf(responseWriter, error.Error())
 		} else  {
 			fmt.Println("success")
-			tmp.ExecuteTemplate(responseWriter, "index", nil)
+			type Message struct {
+				Text string
+			}
+		
+			msg := Message{Text:"Hello, world!"}
+
+			tmp.ExecuteTemplate(responseWriter, "index", msg)
 		}
 	}
 } 
