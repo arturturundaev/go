@@ -1,5 +1,9 @@
 {{ define "index" }}
+<table>
 	{{ range $key, $msg := . }}
-		<H2>{{ $msg.Text }}</H2>
+	<tr>
+		<td>{{ $key }}</td><td>{{ $msg.Text }}</td>
+	</tr>
 	{{ end }}
+</table>	
 {{ end }}

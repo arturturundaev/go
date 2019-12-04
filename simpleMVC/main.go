@@ -7,10 +7,14 @@ import (
 	"html/template"
 )
 
+
+/* Объект Сообщение. Содержит только одно поле - Text */
 type Message struct {
 	Text string
 }
 
+
+/* Массив, каждый элемент который должен быть Message */
 var MessageArr []Message
 
 /**
@@ -23,20 +27,19 @@ func parseUrl(responseWriter http.ResponseWriter, request *http.Request) {
 		tmp, error := template.ParseFiles("view/index.html")
 
 		if error != nil {
-			fmt.Println("eror")
 			fmt.Fprintf(responseWriter, error.Error())
-		} else  {
-			fmt.Println("success")
-			
-		
+		} else  {		
 			msg := Message{Text:"Hello, world!"}
 			MessageArr = append(MessageArr, msg)
-			fmt.Println(MessageArr)
 			tmp.ExecuteTemplate(responseWriter, "index", MessageArr)
 		}
 	}
 } 
 
+
+/**
+  Метод куда приходят все запросы
+*/
 func main() {
 	http.HandleFunc("/", parseUrl)
 	fmt.Println("Start server")
