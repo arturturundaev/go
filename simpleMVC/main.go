@@ -7,12 +7,17 @@ import (
 	"html/template"
 )
 
+type Message struct {
+	Text string
+}
+
+var MessageArr []Message
+
 /**
 @todo future определить какой тип запроса - 
 если json, то и возращать json
 */
 func parseUrl(responseWriter http.ResponseWriter, request *http.Request) {
-	fmt.Println(request.Method)
 	switch request.Method {
 	case "GET":
 		tmp, error := template.ParseFiles("view/index.html")
@@ -22,13 +27,12 @@ func parseUrl(responseWriter http.ResponseWriter, request *http.Request) {
 			fmt.Fprintf(responseWriter, error.Error())
 		} else  {
 			fmt.Println("success")
-			type Message struct {
-				Text string
-			}
+			
 		
 			msg := Message{Text:"Hello, world!"}
-
-			tmp.ExecuteTemplate(responseWriter, "index", msg)
+			MessageArr = append(MessageArr, msg)
+			fmt.Println(MessageArr)
+			tmp.ExecuteTemplate(responseWriter, "index", MessageArr)
 		}
 	}
 } 

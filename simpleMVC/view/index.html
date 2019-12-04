@@ -1,3 +1,5 @@
 {{ define "index" }}
-<H2>{{ .Text }}</H2>
+	{{ range $key, $msg := . }}
+		<H2>{{ $msg.Text }}</H2>
+	{{ end }}
 {{ end }}
