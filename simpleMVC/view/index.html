@@ -2,7 +2,10 @@
 <table>
 	{{ range $key, $msg := . }}
 	<tr>
-		<td>{{ $key }}</td><td>{{ $msg.Text }}</td>
+		<td>{{ $msg.Id }}</td>
+		<td>
+			<a href="/current/{{ $msg.Id }}">{{ $msg.Text }}</a>
+		</td>
 	</tr>
 	{{ end }}
 </table>	
