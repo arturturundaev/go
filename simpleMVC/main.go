@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"html/template"
     "github.com/gorilla/mux"
-    controller "./controller"
+    cntl "./controller"
 )
 
 
@@ -52,9 +52,9 @@ func parseUrl(responseWriter http.ResponseWriter, request *http.Request) {
 */
 func main() {
   request := mux.NewRouter()
-  request.HandleFunc("/{entity}", ParceHandler)
-  request.HandleFunc("/{entity}/{action:create}", ParceHandler)
-  request.HandleFunc("/{entity}/{action:view|edit|delete}/{id}", ParceHandler)
+  request.HandleFunc("/user", ParceHandler)
+  request.HandleFunc("/user/{action:create}", ParceHandler)
+  request.HandleFunc("/user/{action:view|edit|delete}/{id}", ParceHandler)
 
   http.Handle("/", request)
 
@@ -69,16 +69,34 @@ func main() {
 func ParceHandler(responseWriter http.ResponseWriter, request *http.Request) {
   vars := mux.Vars(request)
   fmt.Println(vars)
-  entity := vars["entity"] /* Type of object. For example User, Post, Article */
   action := vars["action"] /* Type of action. What we want to do. For example Edit, Add, Delete, Show */
   id     := vars["id"]     /* Id of nessaccary object. We found object and do our "action" */
 
-  /* If we have "Id" it's mean we work this current entity  */
-  if(id != nil) {
+  /* 1. If we have "Id" it's mean we work this current entity  */
+  if (id != "") {
+  	switch action{
+  		case "delete":
+  			cntl.Delete(id)
+  			break;
+  		case "edit":
+  			cntl.Edit()
+  			break
+  		case "view":
+  			cntl.Get()
+  			break	
+  		default:
+  			// Redirect to main page			
+  	}
 
+  	return;
   }
-fmt.Println(entity)  
-fmt.Println(action)
-fmt.Println(id)
 
+  /* 2. New Entity */
+  if (action == "new") {
+	cntl.Add()
+	return;
+  }
+
+  /* 3. Show all entitys */
+  fmt.Println(cntl.ShowAll());
 }
