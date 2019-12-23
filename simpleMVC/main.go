@@ -53,7 +53,7 @@ func parseUrl(responseWriter http.ResponseWriter, request *http.Request) {
 func main() {
   request := mux.NewRouter()
   request.HandleFunc("/user", ParceHandler)
-  request.HandleFunc("/user/{action:create}", ParceHandler)
+  request.HandleFunc("/user/{action:create|save}", ParceHandler)
   request.HandleFunc("/user/{action:view|edit|delete}/{id}", ParceHandler)
 
   http.Handle("/", request)
@@ -68,10 +68,13 @@ func main() {
 */
 func ParceHandler(responseWriter http.ResponseWriter, request *http.Request) {
   vars := mux.Vars(request)
-  fmt.Println(vars)
   action := vars["action"] /* Type of action. What we want to do. For example Edit, Add, Delete, Show */
   id     := vars["id"]     /* Id of nessaccary object. We found object and do our "action" */
 
+  tmp, error := template.ParseFiles("view/showAll.html", "view/current.html")
+	if error != nil {
+		fmt.Fprintf(responseWriter, error.Error())
+	}
   /* 1. If we have "Id" it's mean we work this current entity  */
   if (id != "") {
   	switch action{
@@ -82,8 +85,9 @@ func ParceHandler(responseWriter http.ResponseWriter, request *http.Request) {
   			cntl.Edit()
   			break
   		case "view":
-  			cntl.Get()
-  			break	
+  			user := cntl.Get(id)
+			tmp.ExecuteTemplate(responseWriter, "current", user)
+			break
   		default:
   			// Redirect to main page			
   	}
@@ -92,11 +96,16 @@ func ParceHandler(responseWriter http.ResponseWriter, request *http.Request) {
   }
 
   /* 2. New Entity */
-  if (action == "new") {
-	cntl.Add()
+  if (action == "save") {
+  	fmt.Println("SAVE")
+	  request.ParseForm()
+  	  fmt.Println(request.PostForm)
+	  fmt.Println(request.Form)
+	  //user := cntl.Add(request.Form)
 	return;
   }
 
   /* 3. Show all entitys */
-  fmt.Println(cntl.ShowAll());
+	EntityArr := cntl.ShowAll()
+	tmp.ExecuteTemplate(responseWriter, "showAll", EntityArr)
 }

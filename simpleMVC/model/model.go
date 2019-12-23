@@ -6,9 +6,9 @@ import (
 )
 
 type User struct {
-	id 		 string
-	login 	 string
-	password string
+	Id       string
+	Login    string
+	Password string
 }
 
 var EntityArr = map[string]User{}
@@ -21,20 +21,22 @@ func Get(id string) User {
 
 func GetAll() map[string]User {
 	uuidString := uuid.New().String()
-	user := User{id:uuidString, login:"myLogin", password:"MyPassword"}
+	user := User{Id: uuidString, Login:"myLogin", Password:"MyPassword"}
 	EntityArr[uuidString] = user
 
-	return EntityArr;
+	return EntityArr
 }
 
 
-func Save(id string, data map[string]string) {
+func Update(id string, login string, password string) User {
 
 	currentUser := EntityArr[id]
-	currentUser.login = data["login"]
-	currentUser.password = data["password"]
+	currentUser.Login = login
+	currentUser.Password = password
 
 	EntityArr[id] = currentUser
+
+	return currentUser
 }
 
 

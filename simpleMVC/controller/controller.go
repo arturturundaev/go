@@ -3,6 +3,7 @@ package controller
 import (
 	"fmt"
 	user "../model"
+	"plugin"
 )
 
 
@@ -12,8 +13,10 @@ func ShowAll() map[string]user.User  {
 
 
 
-func Add() {
-  fmt.Println("DELETE")
+func Add(formData map[string]string) user.User {
+  //if formData["Id"] != "" {
+  	return user.Update(formData["Id"], formData["Login"], formData["Password"])
+  //}
 }
 
 
@@ -25,6 +28,6 @@ func Edit() {
   fmt.Println("EDIT")
 }
 
-func Get() {
-   fmt.Println("GET")
+func Get(id string)user.User {
+	return user.Get(id)
 }
