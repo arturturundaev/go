@@ -7,6 +7,7 @@ import (
 	"html/template"
     "github.com/gorilla/mux"
     cntl "./controller"
+    intfc "./intfc"
 )
 
 
@@ -106,6 +107,20 @@ func ParceHandler(responseWriter http.ResponseWriter, request *http.Request) {
   }
 
   /* 3. Show all entitys */
-	EntityArr := cntl.ShowAll()
+  contr := getNeedlyController('user')
+	EntityArr := contr.ShowAll()
 	tmp.ExecuteTemplate(responseWriter, "showAll", EntityArr)
+}
+
+
+/** Get needly controller  */
+func getNeedlyController(entity string):intfc.Intfc
+{
+  var currentController intfc.Intfc
+  
+  if entity == 'user' {
+    currentController = cntl.UserController{}
+  }
+  
+  return currentController
 }

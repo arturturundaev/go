@@ -1,13 +1,18 @@
 package controller
 
+
+
 import (
 	"fmt"
 	user "../model"
 	"plugin"
 )
 
+type UserController struct {
 
-func ShowAll() map[string]user.User  {
+}
+
+func (cntr UserController)ShowAll() map[string]user.User  {
 	return user.GetAll()
 }
 
