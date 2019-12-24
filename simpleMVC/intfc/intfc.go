@@ -1,5 +1,8 @@
 package intfc
+import (
+    model "../model"
+)
 
 type Intfc interface {
-    ShowAll()
+    ShowAll() map[string]model.Entity
 }

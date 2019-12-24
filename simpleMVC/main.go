@@ -1,13 +1,13 @@
 package main
 
 import (
-	"log"
+	cntl "./controller"
+	intfc "./intfc"
 	"fmt"
-	"net/http"
+	"github.com/gorilla/mux"
 	"html/template"
-    "github.com/gorilla/mux"
-    cntl "./controller"
-    intfc "./intfc"
+	"log"
+	"net/http"
 )
 
 
@@ -63,6 +63,16 @@ func main() {
   log.Fatal(http.ListenAndServe(":3030", nil))
 }
 
+/** Get needly controller  */
+func GetNeedlyController(entity string) intfc.Intfc {
+	var currentController intfc.Intfc
+
+	if entity == "user" {
+		currentController = cntl.UserController{}
+	}
+
+	return currentController
+}
 
 /**
   Parcing url params and call nessaccary function 
@@ -77,12 +87,12 @@ func ParceHandler(responseWriter http.ResponseWriter, request *http.Request) {
 		fmt.Fprintf(responseWriter, error.Error())
 	}
   /* 1. If we have "Id" it's mean we work this current entity  */
-  if (id != "") {
+  if id != "" {
   	switch action{
   		case "delete":
   			cntl.Delete(id)
-  			break;
-  		case "edit":
+  			break
+	case "edit":
   			cntl.Edit()
   			break
   		case "view":
@@ -93,34 +103,26 @@ func ParceHandler(responseWriter http.ResponseWriter, request *http.Request) {
   			// Redirect to main page			
   	}
 
-  	return;
+  	return
   }
 
   /* 2. New Entity */
-  if (action == "save") {
+  if action == "save" {
   	fmt.Println("SAVE")
 	  request.ParseForm()
   	  fmt.Println(request.PostForm)
 	  fmt.Println(request.Form)
 	  //user := cntl.Add(request.Form)
-	return;
+	return
   }
 
   /* 3. Show all entitys */
-  contr := getNeedlyController('user')
+  contr := GetNeedlyController("user")
 	EntityArr := contr.ShowAll()
 	tmp.ExecuteTemplate(responseWriter, "showAll", EntityArr)
+
+
+
 }
 
 
-/** Get needly controller  */
-func getNeedlyController(entity string):intfc.Intfc
-{
-  var currentController intfc.Intfc
-  
-  if entity == 'user' {
-    currentController = cntl.UserController{}
-  }
-  
-  return currentController
-}
