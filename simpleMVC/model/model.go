@@ -3,6 +3,7 @@ package model
 import (
 	"fmt"
 	uuid "github.com/google/uuid"
+  modelInterface "../intfc/model.go"
 )
 
 var EntityArr = map[string]Entity{}
@@ -11,7 +12,7 @@ func Get(id string) Entity {
 	return EntityArr[id]
 }
 
-func GetAll() map[string]Entity {
+func GetAll() modelInterface.EntityArr {
 	uuidString := uuid.New().String()
 	user := Entity{Id: uuidString, Login: "myLogin", Password: "MyPassword"}
 	EntityArr[uuidString] = user
