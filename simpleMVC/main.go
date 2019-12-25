@@ -90,14 +90,14 @@ func ParceHandler(responseWriter http.ResponseWriter, request *http.Request) {
   if id != "" {
   	switch action{
   		case "delete":
-  			cntl.Delete(id)
+  		//	cntl.Delete(id)
   			break
 	case "edit":
-  			cntl.Edit()
+  		//	cntl.Edit()
   			break
   		case "view":
-  			user := cntl.Get(id)
-			tmp.ExecuteTemplate(responseWriter, "current", user)
+  		//	user := cntl.Get(id)
+			//tmp.ExecuteTemplate(responseWriter, "current", user)
 			break
   		default:
   			// Redirect to main page			

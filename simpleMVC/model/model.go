@@ -5,13 +5,19 @@ import (
 	uuid "github.com/google/uuid"
 )
 
-var EntityArr = map[string]Entity{}
+type Entity struct {
+	Id       string
+	Login    string
+	Password string
+}
 
-func Get(id string) Entity {
+var EntityArr = make(map[string]interface{})
+
+func Get(id string) interface{} {
 	return EntityArr[id]
 }
 
-func GetAll() map[string]Entity {
+func GetAll() map[string]interface{} {
 	uuidString := uuid.New().String()
 	user := Entity{Id: uuidString, Login: "myLogin", Password: "MyPassword"}
 	EntityArr[uuidString] = user
@@ -19,11 +25,11 @@ func GetAll() map[string]Entity {
 	return EntityArr
 }
 
-func Update(id string, login string, password string) Entity {
+func Update(id string, login string, password string) interface{} {
 
 	currentUser := EntityArr[id]
-	currentUser.Login = login
-	currentUser.Password = password
+	//currentUserLogin = login
+	//currentUserPassword = password
 
 	EntityArr[id] = currentUser
 
