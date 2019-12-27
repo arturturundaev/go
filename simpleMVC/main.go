@@ -1,8 +1,8 @@
 package main
 
 import (
-	cntl "./controller"
-	intfc "./intfc"
+  userController "./controller/userController"
+	"./intfc/controllerIntfc"
 	"fmt"
 	"github.com/gorilla/mux"
 	"html/template"
@@ -10,52 +10,16 @@ import (
 	"net/http"
 )
 
-
-/* Объект Сообщение. Содержит только одно поле - Text */
-type Message struct {
-	Text string
-	Id int
-}
-
-var increment int
-
-/* Массив, каждый элемент который должен быть Message */
-var MessageArr = make([]Message, 0)
-
-/**
-@todo future определить какой тип запроса - 
-если json, то и возращать json
-*/
-func parseUrl(responseWriter http.ResponseWriter, request *http.Request) {
-	
-	switch request.Method {
-	case "GET":
-		tmp, error := template.ParseFiles("view/index.html")
-
-		if error != nil {
-			fmt.Fprintf(responseWriter, error.Error())
-		} else  {		
-			//currentId := path.Base(request.URL.Path)
-			//if currentId != nil {
-				//tmp.ExecuteTemplate(responseWriter, "current", MessageArr[currentId])
-			//}
-			msg := Message{Text:"Hello, world!", Id:increment}
-			increment++
-			MessageArr[increment] = msg
-			tmp.ExecuteTemplate(responseWriter, "index", MessageArr)
-		}
-	}
-} 
-
+var  tmp, error = template.ParseFiles("view/user/showAll.html", "view/current.html")
 
 /**
   Метод куда приходят все запросы
 */
 func main() {
   request := mux.NewRouter()
-  request.HandleFunc("/user", ParceHandler)
-  request.HandleFunc("/user/{action:create|save}", ParceHandler)
-  request.HandleFunc("/user/{action:view|edit|delete}/{id}", ParceHandler)
+  request.HandleFunc("/{entity}", ParceHandler)
+  request.HandleFunc("/{entity}/{action:create|save}", ParceHandler)
+  request.HandleFunc("/{entity}/{action:view|edit|delete}/{id}", ParceHandler)
 
   http.Handle("/", request)
 
@@ -64,12 +28,13 @@ func main() {
 }
 
 /** Get needly controller  */
-func GetNeedlyController(entity string) intfc.Intfc {
-	var currentController intfc.Intfc
+func getNeedlyController(entity string) controllerIntfc.ControllerIntfc {
+	var currentController controllerIntfc.ControllerIntfc
 
-	if entity == "user" {
-		currentController = cntl.UserController{}
-	}
+  switch entity {
+		 case "user" : currentController = userController.UserController{}
+		 //case "post" : currentController = cntl.PostController{}    
+  }
 
 	return currentController
 }
@@ -79,10 +44,12 @@ func GetNeedlyController(entity string) intfc.Intfc {
 */
 func ParceHandler(responseWriter http.ResponseWriter, request *http.Request) {
   vars := mux.Vars(request)
+  entity := vars["entity"] 
   action := vars["action"] /* Type of action. What we want to do. For example Edit, Add, Delete, Show */
   id     := vars["id"]     /* Id of nessaccary object. We found object and do our "action" */
 
-  tmp, error := template.ParseFiles("view/showAll.html", "view/current.html")
+  contr := getNeedlyController(entity)
+  
 	if error != nil {
 		fmt.Fprintf(responseWriter, error.Error())
 	}
@@ -90,10 +57,10 @@ func ParceHandler(responseWriter http.ResponseWriter, request *http.Request) {
   if id != "" {
   	switch action{
   		case "delete":
-  		//	cntl.Delete(id)
+  		      delete(contr, entity, id, responseWriter, request)
   			break
 	case "edit":
-  		//	cntl.Edit()
+      //delete(contr, entity, id, responseWriter, request)
   			break
   		case "view":
   		//	user := cntl.Get(id)
@@ -115,14 +82,24 @@ func ParceHandler(responseWriter http.ResponseWriter, request *http.Request) {
 	  //user := cntl.Add(request.Form)
 	return
   }
-
   /* 3. Show all entitys */
-  contr := GetNeedlyController("user")
-	EntityArr := contr.ShowAll()
-	tmp.ExecuteTemplate(responseWriter, "showAll", EntityArr)
+  showAll(contr, entity,  responseWriter)
+	
+}
 
 
+/* Отображаем все записи сущности */
+func showAll(contr controllerIntfc.ControllerIntfc, entity string,  responseWriter http.ResponseWriter) {
+  EntityArr := contr.ShowAll()
+  fullTemplateName := entity + "showAll"
+	tmp.ExecuteTemplate(responseWriter, fullTemplateName, EntityArr)
+}
 
+
+/* Удаление сущности */
+func delete(contr controllerIntfc.ControllerIntfc, entity string, id string,  responseWriter http.ResponseWriter, request *http.Request) {
+  contr.Delete(id)
+  http.Redirect(responseWriter, request, "localhost/"+entity, 200)
 }
 
 

@@ -1,22 +1,28 @@
-package controller
+package userController
 
 
 
 import (
 	//"fmt"
 
-	user "../model"
+	user "../../model"
 	//"fmt"
 )
+
 
 type UserController struct {
 
 }
 
+
 func (cntr UserController)ShowAll() map[string]interface{} {
 	return user.GetAll()
 }
 
+
+func (cntr UserController)Delete(id string) {
+  user.Delete(id)
+}
 
 /*
 func Add(formData map[string]string) user.Entity {
@@ -26,9 +32,7 @@ func Add(formData map[string]string) user.Entity {
 }
 
 
-func Delete(id string) {
-  user.Delete(id)
-}
+
 
 func Edit() {
   fmt.Println("EDIT")

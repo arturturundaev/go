@@ -1,7 +1,6 @@
 package model
 
 import (
-	"fmt"
 	uuid "github.com/google/uuid"
 )
 
@@ -38,5 +37,4 @@ func Update(id string, login string, password string) interface{} {
 
 func Delete(id string) {
 	delete(EntityArr, id)
-	fmt.Println(EntityArr)
 }
