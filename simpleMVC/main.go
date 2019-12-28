@@ -99,7 +99,7 @@ func showAll(contr controllerIntfc.ControllerIntfc, entity string,  responseWrit
 /* Удаление сущности */
 func delete(contr controllerIntfc.ControllerIntfc, entity string, id string,  responseWriter http.ResponseWriter, request *http.Request) {
   contr.Delete(id)
-  http.Redirect(responseWriter, request, "localhost/"+entity, 200)
+  http.Redirect(responseWriter, request, "/"+entity, http.StatusSeeOther)
 }
 
 

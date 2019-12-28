@@ -12,10 +12,11 @@
     <tr>
         <td>{{$entity.Id}}</td>
         <td>{{.Login}}</td>
-        <td>{{.Password}}</td>
+        <td>{{.Password}} <a href="/user/delete/{{$entity.Id}}">-</a> </td>
     </tr>
 {{end}}
 </table>
+<a href="/user/add">Add</a>
 </body>
 </html>
 {{end}}
