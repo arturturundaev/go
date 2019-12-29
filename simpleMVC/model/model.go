@@ -1,7 +1,6 @@
 package model
 
 import (
-	"fmt"
 	uuid "github.com/google/uuid"
 )
 
@@ -13,43 +12,37 @@ type Entity struct {
 
 var EntityArr = make(map[string]interface{})
 
+/* Get entity by id from storage */
 func Get(id string) interface{} {
 	return EntityArr[id]
 }
 
+/* Return all entities from storage */
 func GetAll() map[string]interface{} {
 	return EntityArr
 }
 
+/* Update entity by id */
 func Update(data map[string]string) {
-	fmt.Println("Update")				
 	user := getEntity(data)
 	EntityArr[user.Id] = user
 }
 
-func Create(data map[string]string) bool {
-	fmt.Println("Create")
+/* Insert new entity into storage */
+func Create(data map[string]string) {
 	user := getEntity(data)
-	fmt.Println("Create")				
-	fmt.Println(user)				
 	EntityArr[user.Id] = user
-
-	return true
 }
 
+/* Delete entity from storage */
 func Delete(id string) {
 	delete(EntityArr, id)
 }
 
-
-func getEntity(data map[string]string)Entity {
-	fmt.Println("GetEntity")
-	fmt.Println(data)
-	if(data["Id"] == "") {
+func getEntity(data map[string]string) Entity {
+	if data["Id"] == "" {
 		data["Id"] = uuid.New().String()
 	}
 
-	return Entity{	Id: 	  data["Id"], 
-					Login: 	  data["Login"], 
-					Password: data["Password"]}
+	return Entity{Id: data["Id"], Login: data["Login"], Password: data["Password"]}
 }
