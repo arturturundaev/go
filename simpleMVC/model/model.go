@@ -1,6 +1,7 @@
 package model
 
 import (
+	"fmt"
 	uuid "github.com/google/uuid"
 )
 
@@ -17,24 +18,38 @@ func Get(id string) interface{} {
 }
 
 func GetAll() map[string]interface{} {
-	uuidString := uuid.New().String()
-	user := Entity{Id: uuidString, Login: "myLogin", Password: "MyPassword"}
-	EntityArr[uuidString] = user
-
 	return EntityArr
 }
 
-func Update(id string, login string, password string) interface{} {
+func Update(data map[string]string) {
+	fmt.Println("Update")				
+	user := getEntity(data)
+	EntityArr[user.Id] = user
+}
 
-	currentUser := EntityArr[id]
-	//currentUserLogin = login
-	//currentUserPassword = password
+func Create(data map[string]string) bool {
+	fmt.Println("Create")
+	user := getEntity(data)
+	fmt.Println("Create")				
+	fmt.Println(user)				
+	EntityArr[user.Id] = user
 
-	EntityArr[id] = currentUser
-
-	return currentUser
+	return true
 }
 
 func Delete(id string) {
 	delete(EntityArr, id)
+}
+
+
+func getEntity(data map[string]string)Entity {
+	fmt.Println("GetEntity")
+	fmt.Println(data)
+	if(data["Id"] == "") {
+		data["Id"] = uuid.New().String()
+	}
+
+	return Entity{	Id: 	  data["Id"], 
+					Login: 	  data["Login"], 
+					Password: data["Password"]}
 }

@@ -3,10 +3,7 @@ package userController
 
 
 import (
-	//"fmt"
-
 	user "../../model"
-	//"fmt"
 )
 
 
@@ -24,20 +21,22 @@ func (cntr UserController)Delete(id string) {
   user.Delete(id)
 }
 
-/*
-func Add(formData map[string]string) user.Entity {
-  //if formData["Id"] != "" {
-  	return user.Update(formData["Id"], formData["Login"], formData["Password"])
-  //}
+
+func (cntr UserController)Add(formData map[string]string) {
+  if formData["Id"] != "" {
+  	user.Update(formData)
+  } else {
+  	user.Create(formData)
+  }
 }
 
 
 
-
+/*
 func Edit() {
   fmt.Println("EDIT")
 }
-
-func Get(id string)user.Entity {
+*/
+func (cntr UserController)Get(id string)interface{} {
 	return user.Get(id)
-}*/
+}

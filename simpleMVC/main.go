@@ -10,7 +10,7 @@ import (
 	"net/http"
 )
 
-var  tmp, error = template.ParseFiles("view/user/showAll.html", "view/current.html")
+var  tmp, error = template.ParseFiles("view/user/showAll.html", "view/user/current.html")
 
 /**
   Метод куда приходят все запросы
@@ -18,7 +18,7 @@ var  tmp, error = template.ParseFiles("view/user/showAll.html", "view/current.ht
 func main() {
   request := mux.NewRouter()
   request.HandleFunc("/{entity}", ParceHandler)
-  request.HandleFunc("/{entity}/{action:create|save}", ParceHandler)
+  request.HandleFunc("/{entity}/{action:add|save}", ParceHandler)
   request.HandleFunc("/{entity}/{action:view|edit|delete}/{id}", ParceHandler)
 
   http.Handle("/", request)
@@ -47,7 +47,7 @@ func ParceHandler(responseWriter http.ResponseWriter, request *http.Request) {
   entity := vars["entity"] 
   action := vars["action"] /* Type of action. What we want to do. For example Edit, Add, Delete, Show */
   id     := vars["id"]     /* Id of nessaccary object. We found object and do our "action" */
-
+  fmt.Println(action)
   contr := getNeedlyController(entity)
   
 	if error != nil {
@@ -60,7 +60,11 @@ func ParceHandler(responseWriter http.ResponseWriter, request *http.Request) {
   		      delete(contr, entity, id, responseWriter, request)
   			break
 	case "edit":
-      //delete(contr, entity, id, responseWriter, request)
+            model := contr.Get(id)
+
+            tmp.ExecuteTemplate(responseWriter, "userCurrent", model)
+            http.Redirect(responseWriter, request, "/"+entity, http.StatusSeeOther)
+            return
   			break
   		case "view":
   		//	user := cntl.Get(id)
@@ -76,12 +80,22 @@ func ParceHandler(responseWriter http.ResponseWriter, request *http.Request) {
   /* 2. New Entity */
   if action == "save" {
   	fmt.Println("SAVE")
-	  request.ParseForm()
-  	  fmt.Println(request.PostForm)
-	  fmt.Println(request.Form)
-	  //user := cntl.Add(request.Form)
+    request.ParseForm()
+  	  
+    data := getFormData(request)
+    //fmt.Println(request.Form)
+	  contr.Add(data)
+    http.Redirect(responseWriter, request, "/"+entity, http.StatusSeeOther)
+
 	return
   }
+	/* 2. New Entity */
+	if action == "add" {
+		tmp.ExecuteTemplate(responseWriter, "userCurrent", nil)
+    http.Redirect(responseWriter, request, "/"+entity, http.StatusSeeOther)
+		return
+	}
+
   /* 3. Show all entitys */
   showAll(contr, entity,  responseWriter)
 	
@@ -103,3 +117,12 @@ func delete(contr controllerIntfc.ControllerIntfc, entity string, id string,  re
 }
 
 
+func getFormData(request *http.Request) map[string]string {
+  var data = make(map[string]string,0)
+  request.ParseForm()
+  for key, value := range request.Form {
+    data[key] = value[0]  
+  }
+
+  return data
+}

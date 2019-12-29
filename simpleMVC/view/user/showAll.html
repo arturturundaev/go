@@ -12,7 +12,8 @@
     <tr>
         <td>{{$entity.Id}}</td>
         <td>{{.Login}}</td>
-        <td>{{.Password}} <a href="/user/delete/{{$entity.Id}}">-</a> </td>
+        <td>{{.Password}} <a href="/user/delete/{{$entity.Id}}">delete</a>
+        <a href="/user/edit/{{$entity.Id}}">edit</a> </td>
     </tr>
 {{end}}
 </table>
